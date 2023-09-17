@@ -64,8 +64,6 @@ def print_callback(message, context):
     except Exception as e:
         print(f"An error occurred: {e}")
 
-from tqdm import tqdm
-
 def monitor_domains_slice(domain_slice):
     dns_servers = ['8.8.8.8', '1.1.1.1', '208.67.222.222', '208.67.220.220']
     identified_domains = load_identified_domains()
