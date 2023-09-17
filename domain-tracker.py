@@ -9,11 +9,11 @@ import csv
 import subprocess
 
 # Saves the recently match domain to an ip-address.
-def save_identified_domain(domain, ip_address, mx_records, registrar_url, creation_date, expiry_date):
+def save_identified_domain(domain, ip_address, mx_records, registrar_url, creation_date, expiry_date, geo_location):
     sanitized_registrar_url = registrar_url.replace('\n', ' ').replace('\r', '')  # Replacing newlines with space
     with open(f"{keyword}_identified_domains.csv", "a", newline='') as f:
         writer = csv.writer(f)
-        writer.writerow([domain, ip_address, mx_records, sanitized_registrar_url, creation_date, expiry_date])
+        writer.writerow([domain, ip_address, mx_records, sanitized_registrar_url, creation_date, expiry_date, geo_location])
 
 
 
@@ -41,7 +41,7 @@ def get_whois_info(domain):
     try:
         output = subprocess.check_output(f'whois {domain}', shell=True, stderr=subprocess.STDOUT, text=True)
         lines = output.split("\n")
-        registrar_url = creation_date = expiry_date = "N/A"
+        registrar_url = creation_date = expiry_date = geo_location = "N/A"
         for line in lines:
             if "Registrar URL:" in line:
                 registrar_url = ":".join(line.split(":")[1:]).strip()
@@ -49,7 +49,9 @@ def get_whois_info(domain):
                 creation_date = line.split(":")[1].strip()
             elif "Registry Expiry Date:" in line:
                 expiry_date = line.split(":")[1].strip()
-        return registrar_url, creation_date, expiry_date
+            elif "Registrant Country:" in line:
+                geo_location = line.split(":")[1].strip()
+        return registrar_url, creation_date, expiry_date, geo_location
     except subprocess.CalledProcessError as e:
         return "N/A", "N/A", "N/A"
     
@@ -94,8 +96,8 @@ def monitor_domains_slice(domain_slice):
                     identifier = f"{domain} : {ip_address}"
                     if identifier not in identified_domains:
                         mx_records = get_mx_records(domain)
-                        registrar_url, creation_date, expiry_date = get_whois_info(domain)
-                        save_identified_domain(domain, ip_address, mx_records, registrar_url, creation_date, expiry_date)
+                        registrar_url, creation_date, expiry_date, geo_location = get_whois_info(domain)
+                        save_identified_domain(domain, ip_address, mx_records, registrar_url, creation_date, expiry_date, geo_location)
                         identified_domains.add(identifier)
                         pbar.set_postfix_str(f"Domain {domain} exists. IP Address: {ip_address}")
 
@@ -122,7 +124,7 @@ if __name__ == "__main__":
     # Initialize CSV file with headers
     with open(f"{keyword}_identified_domains.csv", mode='w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(['domain', 'ip', 'mx', 'Registrar URL', 'Creation Date', 'Registry Expiry Date'])
+        writer.writerow(['domain', 'ip', 'mx', 'Registrar URL', 'Creation Date', 'Registry Expiry Date', 'Registrant Country'])
 
 
     num_threads = int(input("Enter the number of threads you want to use for domain monitoring: "))
