@@ -18,4 +18,5 @@ You don't want others to impersonate your domain for any malicious purposes.
 - This will create the {keyword}_identified_domains.csv where keyword is the user input
   ![image](https://github.com/romarroca/domaintracker/assets/87074019/4c5d2e2f-d293-4dd8-8c2e-30580b7c3531)
 
+### You can modify the create_domainlist.py to your liking. Feel free to edit also the TLD text file depending on your usage.
   
