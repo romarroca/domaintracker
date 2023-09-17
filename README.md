@@ -1,9 +1,5 @@
 # domaintracker.py
-The script will create a dictionary list from the domain you provided and save it into a file. Then we will use that
-file to read each line to check if a domain (that kind of looks like your domain) has a resolvable address. We will use nslookup
-to check for resolvable ip and if there is an mx record related to it. We will then run whois to identify the registrar url,
-creation data, and expiry date.
-You don't want others to impersonate your domain for any malicious purposes.
+The script will generate a list of domain variations based on the domain you provide and save it to a file. We will then read each line from this file to check whether any domains resembling yours have resolvable IP addresses. To do this, we'll use nslookup to identify resolvable IPs and associated MX records. Following this, we'll run a WHOIS query to find out details such as the registrar URL, creation date, and expiry date of the domain. The script enables you to monitor for potential domain impersonation and report any abuse for timely intervention.
 
 ## Usage
 - pip install -r requirements.txt
